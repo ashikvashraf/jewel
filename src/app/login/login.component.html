@@ -1,0 +1,48 @@
+<div class="login-box shadow p-5">
+  <div class="login-logo">
+    <h2>HomeSafe</h2>
+  </div>
+  <div class="login-box-body">
+    <p class="login-box-msg">Please sign in</p>
+    <form #usForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class="form-group has-feedback">
+        <input
+          type="text"
+          value=""
+          placeholder="Username"
+          class="form-control"
+          id="login"
+          maxlength="80"
+          size="30"
+          ngModel
+          name="user_name"
+        />
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input
+          type="password"
+          value=""
+          placeholder="Password"
+          class="form-control"
+          id="password"
+          size="30"
+          ngModel
+          name="password"
+        />
+        <span class="glyphicon glyphicon-lock form-control-feedback"> </span>
+      </div>
+      <div class="col-xs-4">
+        <button type="submit" class="btn btn-block btn-primary">
+          <span
+            *ngIf="loading"
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span
+          >Login
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

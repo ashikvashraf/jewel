@@ -1,0 +1,16 @@
+<div class="sidebar" id="Sidebar">
+  <img src="assets/logo.png" alt="logo" />
+  <div *ngFor="let item of sider_items">
+    <!-- <dl>
+      <dt> -->
+        <a
+          class="sider-list" 
+          [class.active]="item.id == currentPageIndex"
+          (click)="ChangeSelectedPage(item)"
+        >
+          <span class="menu-title">{{ item.name }}</span>
+        </a>
+      <!-- </dt>
+    </dl> -->
+  </div>
+</div>

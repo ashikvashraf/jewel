@@ -1,0 +1,62 @@
+<app-header></app-header>
+<app-sider (pageChangeEvent)="OnChange($event)"></app-sider>
+<div class="content">
+  <div
+    *ngIf="loading"
+    class="spinner-border text-primary centered"
+    style="width: 15rem; height: 15rem;"
+    role="status"
+  >
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div *ngIf="!loading" class="row">
+    <div class="col mt-5">
+      <div class="card">
+        <div class="card-body">
+          <h3>Visitors</h3>
+          <p>You can view Visitors to all flats here</p>
+          <div class="table-responsive">
+            <table class="table table-hover mt-3">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">Vehicle</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Purpose</th>
+                  <th scope="col">Invitee</th>
+                  <th scope="col">Check-in</th>
+                  <th scope="col">Check-out</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of visitors; let i = index">
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.phone_number }}</td>
+                  <td>{{ item.vehicle_number }}</td>
+                  <td>{{ item.date }}</td>
+                  <td>{{ item.purpose_of_visit }}</td>
+                  <td>{{ item.resident_name }} {{ item.apartment_name }}</td>
+                  <td *ngIf="item.checkin_time">
+                    {{ item.checkin_date }} {{ item.checkin_time }}
+                  </td>
+                  <td *ngIf="!item.checkin_time">
+                    -
+                  </td>
+
+                  <td *ngIf="item.checkout_time">
+                    {{ item.checkout_date }} {{ item.checkout_time }}
+                  </td>
+                  <td *ngIf="!item.checkout_time">
+                    -
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

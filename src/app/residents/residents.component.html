@@ -1,0 +1,229 @@
+<app-header></app-header>
+<app-sider (pageChangeEvent)="OnChange($event)"></app-sider>
+<div class="content">
+  <div
+    *ngIf="loading"
+    class="spinner-border text-primary centered"
+    style="width: 15rem; height: 15rem;"
+    role="status"
+  >
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div
+    class="modal fade"
+    id="addNewResidentModal"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addNewResidentModalTitle">
+            Add New Employee
+          </h5>
+          <button
+            type="button"
+            class="close"
+            #closebutton
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #usForm="ngForm" (ngSubmit)="FormSubmit()">
+            <div class="form-group">
+              <label for="flat_user_name">Name</label>
+              <input
+                class="form-control"
+                id="flat_user_name"
+                required
+                placeholder="Enter resident name"
+                ngModel
+                name="flat_user_name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="building">Building</label>
+              <select
+                class="form-control"
+                id="building"
+                required
+                ngModel
+                (ngModelChange) = "buildingOnChange($event)"
+                name="building"
+              >
+                <option value="" disabled selected hidden>Choose...</option>
+                <option
+                  *ngFor="let item of buildings"
+                  value="{{ item.id }}"
+                  >{{ item.name }}</option
+                >
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="apartment">Apartment</label>
+              <select
+                class="form-control"
+                id="apartment"
+                required
+                ngModel
+                name="apartment"
+              >
+                <option value="" disabled selected hidden>Choose...</option>
+                <option
+                  *ngFor="let item of apartments"
+                  value="{{ item.id }}"
+                  >{{ item.name }}</option
+                >
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="phone_number">Phone No.</label>
+              <input
+                class="form-control"
+                id="phone_number"
+                type="number"
+                maxlength="13"
+                required
+                placeholder="Enter resident Phone"
+                ngModel
+                name="phone_number"
+              />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                class="form-control"
+                id="email"
+                required
+                placeholder="Enter resident email"
+                ngModel
+                name="email"
+              />
+            </div>
+            <div class="form-group">
+              <label for="address">Address</label>
+              <textarea
+                class="form-control"
+                id="address"
+                required
+                placeholder="Enter address"
+                ngModel
+                name="address"
+              ></textarea>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary ml-2" [disabled]="btnLoading">
+              <span *ngIf="btnLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Save changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!loading" class="row">
+    <div class="col mt-5">
+      <div class="card">
+        <div class="card-body">
+          <h3>Residents</h3>
+          <p>
+            You can add new residents to the system and view existing residents
+            here
+          </p>
+          <button
+            type="button"
+            class="btn btn-outline-primary btn-lg"
+            data-toggle="modal"
+            data-target="#addNewResidentModal"
+          >
+            Add New Resident
+          </button>
+          <div class="table-responsive">
+            <table class="table table-hover mt-3">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Building</th>
+                  <th scope="col">Apartment</th>
+                  <th scope="col">Address</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of residents; let i = index">
+                  <td>{{ item.flat_user_name }}</td>
+                  <td>{{ item.phone_number }}</td>
+                  <td>{{ item.email }}</td>
+                  <td>{{ item.building_name }}</td>
+                  <td>{{ item.apartment_name }}</td>
+                  <td>{{ item.address }}</td>
+                  <td>
+                    <a>
+                      <img
+                        src="./assets/edit.svg"
+                        style="width: 20px; height: auto; cursor: pointer;"
+                      />
+                    </a>
+                    <a
+                      data-toggle="modal"
+                      data-target="#deleteModal"
+                      (click)="deleteResidents(item)"
+                      class="ml-1"
+                    >
+                      <img
+                        src="assets/delete.svg"
+                        style="width: 20px; height: auto; cursor: pointer;"
+                        alt="delete"
+                      />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal fade bd-delete-modal-sm"
+    id="deleteModal"
+    tabindex="-1"
+    role="dialog"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body">
+          Do you want to delete this resident?
+        </div>
+        <div class="modal-footer justify-content-around">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            No! Cancel.
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="deleteResidentsConfirm(true)"
+            data-dismiss="modal"
+          >
+            Yes! Delete.
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
