@@ -9,9 +9,10 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
+
   <div
     class="modal fade"
-    id="addNewResidentModal"
+    id="NeworExistingModal"
     tabindex="-1"
     role="dialog"
     aria-hidden="true"
@@ -20,7 +21,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="addNewResidentModalTitle">
-            Add New Employee
+            Select
           </h5>
           <button
             type="button"
@@ -33,53 +34,66 @@
           </button>
         </div>
         <div class="modal-body">
-          <form #usForm="ngForm" (ngSubmit)="FormSubmit()">
-            <div class="form-group">
-              <label for="flat_user_name">Name</label>
-              <input
-                class="form-control"
-                id="flat_user_name"
-                required
-                placeholder="Enter resident name"
-                ngModel
-                name="flat_user_name"
-              />
-            </div>
-            <div class="form-group">
-              <label for="building">Building</label>
-              <select
-                class="form-control"
-                id="building"
-                required
-                ngModel
-                (ngModelChange) = "buildingOnChange($event)"
-                name="building"
-              >
-                <option value="" disabled selected hidden>Choose...</option>
-                <option
-                  *ngFor="let item of buildings"
-                  value="{{ item.id }}"
-                  >{{ item.name }}</option
-                >
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="apartment">Apartment</label>
-              <select
-                class="form-control"
-                id="apartment"
-                required
-                ngModel
-                name="apartment"
-              >
-                <option value="" disabled selected hidden>Choose...</option>
-                <option
-                  *ngFor="let item of apartments"
-                  value="{{ item.id }}"
-                  >{{ item.name }}</option
-                >
-              </select>
-            </div>
+          <div class="row justify-content-center">
+            <button
+              type="button"
+              class="btn mr-2 btn-outline-primary btn-lg"
+              (click)="changeFormType(true)"
+              data-toggle="modal"
+              data-target="#addNewResidentModal"
+            >
+              New Resident
+            </button>
+            <div class="vl"></div>
+            <button
+              type="button"
+              class="btn ml-2 btn-outline-primary btn-lg"
+              (click)="changeFormType(false)"
+              data-toggle="modal"
+              data-target="#addNewResidentModal"
+            >
+              Existing Resident
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div
+    class="modal fade"
+    id="addNewResidentModal"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addNewResidentModalTitle">
+            <ng-container *ngIf="isNewForm; else elseTemplate">
+              Add Resident
+            </ng-container>
+            <ng-template #elseTemplate>
+              Edit Resident
+            </ng-template>
+          </h5>
+          <button
+            type="button"
+            class="close"
+            #closebutton
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form
+            *ngIf="showform"
+            [formGroup]="residentForm"
+            (ngSubmit)="FormSubmit()"
+          >
             <div class="form-group">
               <label for="phone_number">Phone No.</label>
               <input
@@ -89,9 +103,64 @@
                 maxlength="13"
                 required
                 placeholder="Enter resident Phone"
-                ngModel
+                formControlName="phone_number"
                 name="phone_number"
               />
+              <a
+                *ngIf="!isNewResident"
+                class="btn btn-primary mt-1"
+                (click)="searchUsers()"
+                role="button"
+                ><span
+                  *ngIf="btnLoading"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span
+                >Search</a
+              >
+            </div>
+            <div class="form-group">
+              <label for="flat_user_name">Name</label>
+              <input
+                class="form-control"
+                id="flat_user_name"
+                required
+                placeholder="Enter resident name"
+                formControlName="flat_user_name"
+                name="flat_user_name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="building">Building</label>
+              <select
+                class="form-control"
+                id="building"
+                required
+                formControlName="building"
+                (ngModelChange)="buildingOnChange($event)"
+                name="building"
+              >
+                <option value="" disabled selected hidden>Choose...</option>
+                <option *ngFor="let item of buildings" value="{{ item.id }}">{{
+                  item.name
+                }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="apartment">Apartment</label>
+              <select
+                class="form-control"
+                id="apartment"
+                required
+                formControlName="apartment"
+                name="apartment"
+              >
+                <option value="" disabled selected hidden>Choose...</option>
+                <option *ngFor="let item of apartments" value="{{ item.id }}">{{
+                  item.name
+                }}</option>
+              </select>
             </div>
             <div class="form-group">
               <label for="email">Email</label>
@@ -100,7 +169,7 @@
                 id="email"
                 required
                 placeholder="Enter resident email"
-                ngModel
+                formControlName="email"
                 name="email"
               />
             </div>
@@ -111,11 +180,10 @@
                 id="address"
                 required
                 placeholder="Enter address"
-                ngModel
+                formControlName="address"
                 name="address"
               ></textarea>
             </div>
-
             <button
               type="button"
               class="btn btn-secondary"
@@ -123,8 +191,17 @@
             >
               Close
             </button>
-            <button type="submit" class="btn btn-primary ml-2" [disabled]="btnLoading">
-              <span *ngIf="btnLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <button
+              type="submit"
+              class="btn btn-primary ml-2"
+              [disabled]="btnLoading || !residentForm.valid"
+            >
+              <span
+                *ngIf="btnLoading"
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
               Save changes
             </button>
           </form>
@@ -145,7 +222,8 @@
             type="button"
             class="btn btn-outline-primary btn-lg"
             data-toggle="modal"
-            data-target="#addNewResidentModal"
+            (click)="formReset()"
+            data-target="#NeworExistingModal"
           >
             Add New Resident
           </button>
@@ -171,7 +249,12 @@
                   <td>{{ item.apartment_name }}</td>
                   <td>{{ item.address }}</td>
                   <td>
-                    <a>
+                    <a
+                      data-toggle="modal"
+                      data-target="#addNewResidentModal"
+                      (click)="updateForm(item)"
+                      class="ml-1"
+                    >
                       <img
                         src="./assets/edit.svg"
                         style="width: 20px; height: auto; cursor: pointer;"

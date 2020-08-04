@@ -46,4 +46,6 @@ editBuildings : "community/building_details/",
 addApartments : "community/apartment/",
 editApartments : "community/apartment_details/",
 addResidents : "resident/resident/",
+editResidents : "resident/resident_details/",
+addSecurity : "administration/security/",
 }

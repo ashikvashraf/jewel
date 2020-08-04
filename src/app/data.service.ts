@@ -62,9 +62,6 @@ export class DataService {
   getMaintenanceFeeTypes() {
     return this.http.get(this.baseURL + apiURLs.maintenanceFeeTypes, httpOptions);
   }
-  deleteEmployee(id) {
-    return this.http.delete(this.baseURL + `users/` + `${id}`, httpOptions);
-  }
   getBuildings() {
     return this.http.get(
       this.baseURL +
@@ -137,6 +134,18 @@ export class DataService {
     };
     return this.http.delete(this.baseURL + apiURLs.addResidents, options);
   }
+  deleteSecurity(deleteItems) {
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Token ${localStorage.getItem('token')}`,
+      }),
+      body: {
+        delete_ids: [deleteItems],
+      },
+    };
+    return this.http.delete(this.baseURL + apiURLs.addSecurity, options);
+  }
   deleteNotices(deleteItems) {
     const options = {
       headers: new HttpHeaders({
@@ -179,7 +188,7 @@ export class DataService {
     );
   }
   editBuildings(visitor,id) {
-    return this.http.patch(
+    return this.http.put(
       this.baseURL + apiURLs.editBuildings + `${id}/`,
       visitor,
       httpOptions
@@ -193,7 +202,7 @@ export class DataService {
     );
   }
   editApartments(visitor,id) {
-    return this.http.patch(
+    return this.http.put(
       this.baseURL + apiURLs.editApartments + `${id}/`,
       visitor,
       httpOptions
@@ -206,9 +215,16 @@ export class DataService {
       httpOptions
     );
   }
+  editResidents(resident,id) {
+    return this.http.put(
+      this.baseURL + apiURLs.editResidents + `${id}/`,
+      resident,
+      httpOptions
+    );
+  }
   searchUser(phone) {
     return this.http.get(
-      this.baseURL + apiURLs.searchUser + `${phone}/`,
+      this.baseURL + apiURLs.searchUser + `${phone}`,
       httpOptions
     );
   }
@@ -234,9 +250,16 @@ export class DataService {
     );
   }
   editFees(fees,id) {
-    return this.http.patch(
+    return this.http.put(
       this.baseURL + apiURLs.editMaintenanceFeeTypes + `${id}/`,
       fees,
+      httpOptions
+    );
+  }
+  addSecurity(security) {
+    return this.http.post(
+      this.baseURL + apiURLs.addSecurity,
+      security,
       httpOptions
     );
   }

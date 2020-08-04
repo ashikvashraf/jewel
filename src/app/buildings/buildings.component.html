@@ -20,7 +20,12 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="addNewBuildingModalTitle">
-            Add New Buildings
+            <ng-container *ngIf="isNewForm; else elseTemplate">
+              Add New Building
+            </ng-container>
+            <ng-template #elseTemplate>
+              Edit Building
+            </ng-template>
           </h5>
           <button
             type="button"
@@ -101,6 +106,7 @@
           <button
             type="button"
             class="btn btn-outline-primary btn-lg"
+            (click)="formReset()"
             data-toggle="modal"
             data-target="#addNewBuildingModal"
           >

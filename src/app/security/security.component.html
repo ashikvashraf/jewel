@@ -9,9 +9,10 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
+
   <div
     class="modal fade"
-    id="addNewSecurityModal"
+    id="NeworExistingModal"
     tabindex="-1"
     role="dialog"
     aria-hidden="true"
@@ -19,8 +20,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addNewSecurityModalTitle">
-            Add New Security
+          <h5 class="modal-title" id="addNewResidentModalTitle">
+            Select
           </h5>
           <button
             type="button"
@@ -33,7 +34,92 @@
           </button>
         </div>
         <div class="modal-body">
-          <form #usForm="ngForm" (ngSubmit)="FormSubmit()">
+          <div class="row justify-content-center">
+            <button
+              type="button"
+              class="btn mr-2 btn-outline-primary btn-lg"
+              (click)="changeFormType(true)"
+              data-toggle="modal"
+              data-target="#addNewSecurityModal"
+            >
+              New User
+            </button>
+            <div class="vl"></div>
+            <button
+              type="button"
+              class="btn ml-2 btn-outline-primary btn-lg"
+              (click)="changeFormType(false)"
+              data-toggle="modal"
+              data-target="#addNewSecurityModal"
+            >
+              Existing User
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
+    id="addNewSecurityModal"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addNewSecurityModalTitle">
+            Add Security
+            <!-- <ng-container *ngIf="isNewForm; else elseTemplate">
+            </ng-container>
+            <ng-template #elseTemplate>
+              Edit Security
+            </ng-template> -->
+          </h5>
+          <button
+            type="button"
+            class="close"
+            #closebutton
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form
+            *ngIf="showform"
+            [formGroup]="securityForm"
+            (ngSubmit)="FormSubmit()"
+          >
+            <div class="form-group">
+              <label for="name">Phone No.</label>
+              <input
+                class="form-control"
+                id="phone"
+                type="number"
+                maxlength="13"
+                required
+                placeholder="Enter employee Phone"
+                formControlName="phone"
+                name="phone"
+              />
+              <a
+                *ngIf="!isNewSecurity"
+                class="btn btn-primary mt-1"
+                (click)="searchUsers()"
+                role="button"
+                ><span
+                  *ngIf="btnLoading"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span
+                >Search</a
+              >
+            </div>
             <div class="form-group">
               <label for="name">Name</label>
               <input
@@ -41,74 +127,11 @@
                 id="name"
                 required
                 placeholder="Enter employee name"
-                ngModel
+                formControlName="name"
                 name="name"
               />
             </div>
-            <div class="form-group">
-              <label for="name">Phone No.</label>
-              <input
-                class="form-control"
-                id="phone"
-                required
-                placeholder="Enter employee Phone"
-                ngModel
-                name="phone"
-              />
-            </div>
 
-            <div class="form-group">
-              <label for="emp_type">Employee Type</label>
-              <select
-                class="form-control"
-                id="emp_type"
-                required
-                placeholder="Select Employee type"
-                ngModel
-                name="emp_type"
-              >
-                <option value="" disabled selected hidden>Choose...</option>
-                <option
-                  *ngFor="let item of employeeTypes"
-                  value="{{ item.id }}"
-                  >{{ item.name }}</option
-                >
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input
-                class="form-control"
-                id="email"
-                required
-                placeholder="Enter employee email"
-                ngModel
-                name="email"
-              />
-            </div>
-            <div class="form-group">
-              <label for="username">Username</label>
-              <input
-                class="form-control"
-                id="username"
-                required
-                placeholder="Enter username"
-                ngModel
-                name="username"
-              />
-            </div>
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input
-                class="form-control"
-                id="password"
-                required
-                type="password"
-                placeholder="Enter password"
-                ngModel
-                name="password"
-              />
-            </div>
             <button
               type="button"
               class="btn btn-secondary"
@@ -119,7 +142,7 @@
             <button
               type="submit"
               class="btn btn-primary ml-2"
-              [disabled]="btnLoading"
+              [disabled]="btnLoading || !securityForm.valid"
             >
               <span
                 *ngIf="btnLoading"
@@ -144,7 +167,8 @@
             type="button"
             class="btn btn-outline-primary btn-lg"
             data-toggle="modal"
-            data-target="#addNewSecurityModal"
+            (click)="formReset()"
+            data-target="#NeworExistingModal"
           >
             Add New Security
           </button>
@@ -166,12 +190,17 @@
                   <td>{{ item.community_name }}</td>
                   <td>{{ item.location_name }}</td>
                   <td>
-                    <a>
+                    <!-- <a
+                      data-toggle="modal"
+                      data-target="#addNewSecurityModal"
+                      (click)="updateForm(item)"
+                      class="ml-1"
+                    >
                       <img
                         src="./assets/edit.svg"
                         style="width: 20px; height: auto; cursor: pointer;"
                       />
-                    </a>
+                    </a> -->
                     <a
                       data-toggle="modal"
                       data-target="#deleteModal"
