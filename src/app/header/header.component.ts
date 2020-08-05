@@ -31,13 +31,14 @@ export class HeaderComponent implements OnInit {
 }
   OpenNav() {
     this.count++;
+    let content = document.getElementsByClassName('content') as HTMLCollectionOf<HTMLElement>;
     if(this.count % 2 === 0) {
       document.getElementById("Sidebar").style.width = "0";
       document.getElementById("Sidebar").style.transitionDuration = "0.5s";
       document.getElementById("navbutton").style.width = "85px";
       document.getElementById("navbutton").style.transitionDuration = "0.5s";
-      document.getElementsByClassName("content")[0].style.marginLeft = "10px";
-      document.getElementsByClassName("content")[0].style.transitionDuration = "0.5s";
+      content[0].style.marginLeft = "10px";
+      content[0].style.transitionDuration = "0.5s";
     }
     else {
       document.getElementById("Sidebar").style.width = "211px";
@@ -47,11 +48,11 @@ export class HeaderComponent implements OnInit {
       document.getElementById("navbutton").style.transitionDuration = "0.5s";
       if( window.screen.width > 700) {
         console.log(window.screen.width);
-        document.getElementsByClassName("content")[0].style.marginLeft = "221px";
+        content[0].style.marginLeft = "221px";
         // document.getElementsByClassName("content")[0].style.backgroundColor = "rgba(0,0,0,0.4)";
         console.log(document.getElementsByClassName("content"))
       }
-      document.getElementsByClassName("content")[0].style.transitionDuration = "0.5s";
+      content[0].style.transitionDuration = "0.5s";
     }
   }
   logout() {
