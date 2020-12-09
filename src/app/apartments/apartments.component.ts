@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { siderList } from '../constants';
+import { siderList, fieldAgentColumnDefs, filteredCustomerColumnDefs } from '../constants';
 import { DataService } from '../data.service';
+import { Visitor } from '../_models/visitors';
 
 @Component({
   selector: 'app-apartments',
@@ -11,59 +12,58 @@ import { DataService } from '../data.service';
 export class ApartmentsComponent implements OnInit {
   @ViewChild('closebutton') closebutton;
 
-  apartmentForm = this.fb.group({
-    name: ['', Validators.required],
-    address: ['', Validators.required],
-    description: [''],
-    building: ['', Validators.required],
+  assignForm = this.fb.group({
+    user: ['', Validators.required],
   });
 
+  currentUser;
   currentPage = 0;
   selectedPage: any = {};
-  apartments: any = [];
-  buildings: any = [];
-  addApartment: any = {};
+  payload: any = {};
   siderItems = siderList;
-  deleteID: any = {};
+  columnDefs = fieldAgentColumnDefs;
+  customerColumnDefs = filteredCustomerColumnDefs;
+  rowSelection = 'single';
+  buildings: any;
+  agents: any = {};
+  areaFilter: '';
+  selectedRows: any = [];
   loading = true;
-  btnLoading = false;
-  isNewForm = true;
-  editId;
 
   constructor(public dataservice: DataService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.getApartments();
-    this.getBuildings();
+    this.getAreaLists();
+    // this.getCustomers();
   }
-  formReset() {
-    this.isNewForm = true;
-    this.apartmentForm.reset();
+  getCustomers() {
+    this.dataservice
+      .getCustomersbyAgent(this.selectedRows[0].id)
+      .subscribe((result: any) => {
+        this.buildings = Array.from(result.body.data, (x:any) => x.customer) ;
+        console.log('getCustomers', this.buildings);
+        this.loading = false;
+      });
   }
-  updateForm(item) {
-    this.editId = item.id;
-    this.isNewForm = false;
-    this.apartmentForm.patchValue({
-      name: item.name,
-      address: item.address,
-      description: item.description,
-      building: item.building,
-    });
-  }
-  getApartments() {
+  getAreaLists() {
     this.loading = true;
-    this.dataservice.getApartments().subscribe((result: any) => {
-      this.apartments = result.body.data;
-      console.log('getapartments', this.apartments);
+    this.dataservice.getAgents().subscribe((result: any) => {
+      this.agents = result.body.data;
+      console.log('areaList', this.agents);
       this.loading = false;
     });
   }
-  getBuildings() {
-    this.dataservice.getBuildings().subscribe((result: any) => {
-      this.buildings = result.body.data;
-      console.log('getBuildings', this.buildings);
-    });
+  onGridReady = (params) => {
+    params.api.sizeColumnsToFit();
+    // this.gridApi = params.api;
+    // this.gridColumnApi = params.columnApi;
+  };
+
+  onSelectionChanged(event) {
+    this.selectedRows = event.api.getSelectedRows();
+    console.log(this.selectedRows);
   }
+
   OnChange(changeData) {
     this.currentPage = changeData;
     console.log('changeData', changeData);
@@ -71,55 +71,5 @@ export class ApartmentsComponent implements OnInit {
       (rooms) => rooms.id == changeData
     );
     console.log('filter', this.selectedPage);
-  }
-  FormSubmit() {
-    this.btnLoading = true;
-    this.addApartment = this.apartmentForm.value;
-    console.log(this.addApartment, 'formvalue');
-    if (this.isNewForm === true) {
-      this.dataservice
-        .addApartments(this.addApartment)
-        .subscribe((result: any) => {
-          console.log('FormSubmit', result);
-          if (result.status === 201) {
-            alert('Apartment created successfully!');
-            this.btnLoading = false;
-            this.closebutton.nativeElement.click();
-            this.getApartments();
-            location.reload();
-          } else {
-            this.btnLoading = false;
-            alert('Failed. Please check the fields!');
-          }
-        });
-    } else {
-      this.dataservice
-        .editApartments(this.addApartment, this.editId)
-        .subscribe((result: any) => {
-          console.log('FormSubmit', result);
-          if (result.status === 200) {
-            alert('Apartment edited successfully!');
-            this.btnLoading = false;
-            this.closebutton.nativeElement.click();
-            this.getApartments();
-            location.reload();
-          } else {
-            this.btnLoading = false;
-            alert('Failed. Please check the fields!');
-          }
-        });
-    }
-  }
-  deleteApartment(item) {
-    this.deleteID = item;
-    console.log(this.deleteID);
-  }
-  deleteApartmentConfirm(check) {
-    console.log(check);
-    this.dataservice.deleteAparments(this.deleteID.id).subscribe((result) => {
-      console.log(result);
-      this.getApartments();
-      location.reload();
-    });
   }
 }

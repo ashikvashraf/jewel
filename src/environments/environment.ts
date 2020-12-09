@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   // apiUrl: 'http://office-admin-core.live.untanglestrategy.com/'
-  apiUrl: 'http://homesafe-dev.live.untanglestrategy.com/api/'
+  apiUrl: 'https://telecaller-dev.app.vazhemadomprints.com/api/'
 };
 
 /*

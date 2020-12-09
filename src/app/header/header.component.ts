@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.location = localStorage.getItem('location_name');
+    this.location = localStorage.getItem('company_name');
     this.community = localStorage.getItem('community_name');
   }
   get isAdmin() {

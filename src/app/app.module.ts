@@ -8,20 +8,14 @@ import { LoginComponent } from './login/login.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SiderComponent } from './sider/sider.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { BuildingsComponent } from './buildings/buildings.component';
-import { ResidentsComponent } from './residents/residents.component';
+import { CustomersComponent } from './buildings/buildings.component';
 import { ApartmentsComponent } from './apartments/apartments.component';
-import { SecurityComponent } from './security/security.component';
 import { HeaderComponent } from './header/header.component';
 import { GraphQLModule } from './graphql.module';
-import { BillsComponent } from './bills/bills.component';
-import { ComplaintsComponent } from './complaints/complaints.component';
-import { NoticeboardComponent } from './noticeboard/noticeboard.component';
-import { VisitorsComponent } from './visitors/visitors.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { FooterComponent } from './footer/footer.component';
-import { MaintenanceFeeComponent } from './maintenance-fee/maintenance-fee.component';
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   declarations: [
@@ -29,17 +23,10 @@ import { MaintenanceFeeComponent } from './maintenance-fee/maintenance-fee.compo
     LoginComponent,
     SiderComponent,
     DashboardComponent,
-    BuildingsComponent,
-    ResidentsComponent,
-    VisitorsComponent,
+    CustomersComponent,
     ApartmentsComponent,
-    SecurityComponent,
-    BillsComponent,
-    ComplaintsComponent,
-    NoticeboardComponent,
     HeaderComponent,
     FooterComponent,
-    MaintenanceFeeComponent
   ],
   imports: [
     BrowserModule,
@@ -51,6 +38,7 @@ import { MaintenanceFeeComponent } from './maintenance-fee/maintenance-fee.compo
     GraphQLModule,
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
+    AgGridModule.withComponents([])
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { siderList } from '../constants';
+import { siderList, customerColumnDefs } from '../constants';
 import { DataService } from '../data.service';
 import { Visitor } from '../_models/visitors';
 
@@ -9,21 +9,25 @@ import { Visitor } from '../_models/visitors';
   templateUrl: './buildings.component.html',
   styleUrls: ['./buildings.component.scss'],
 })
-export class BuildingsComponent implements OnInit {
+export class CustomersComponent implements OnInit {
   @ViewChild('closebutton') closebutton;
 
-  buildingForm = this.fb.group({
-    name: ['', Validators.required],
-    address: ['', Validators.required],
-    description: [''],
+  assignForm = this.fb.group({
+    user: ['', Validators.required],
   });
 
   currentUser;
   currentPage = 0;
   selectedPage: any = {};
-  addVisitors: any = {};
+  payload: any = {};
   siderItems = siderList;
+  columnDefs = customerColumnDefs;
+  rowSelection = 'multiple';
   buildings: Visitor;
+  areaList: any = {};
+  agents: any = {};
+  areaFilter: '';
+  selectedRows: any = [];
   deleteID: any = {};
   loading = true;
   btnLoading = false;
@@ -34,29 +38,45 @@ export class BuildingsComponent implements OnInit {
   constructor(public dataservice: DataService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.getBuildings();
+    this.getCustomers();
+    this.getAreaLists();
   }
-  formReset() {
-    this.isNewForm = true;
-    this.buildingForm.reset();
-  }
-  updateForm(item) {
-    this.editId = item.id;
-    this.isNewForm = false;
-    this.buildingForm.patchValue({
-      name: item.name,
-      address: item.address,
-      description: item.description,
-    });
-  }
-  getBuildings() {
+  getCustomers() {
     this.loading = true;
-    this.dataservice.getBuildings().subscribe((result: any) => {
-      this.buildings = result.body.data;
-      console.log('getBuildings', this.buildings);
-      this.loading = false;
+    this.dataservice
+      .getCustomers(this.areaFilter ? this.areaFilter : '')
+      .subscribe((result: any) => {
+        this.buildings = result.body.data;
+        console.log('getCustomers', this.buildings);
+        this.loading = false;
+      });
+  }
+  getAreaLists() {
+    this.dataservice.getAreaLists().subscribe((result: any) => {
+      this.areaList = result.body.data;
+      console.log('areaList', this.areaList);
+    });
+    this.dataservice.getAgents().subscribe((result: any) => {
+      this.agents = result.body.data;
+      console.log('areaList', this.agents);
     });
   }
+  filterChange(event) {
+    // console.log(event.target.value);
+    this.areaFilter = event.target.value;
+    this.getCustomers();
+  }
+  onGridReady = (params) => {
+    params.api.sizeColumnsToFit();
+    // this.gridApi = params.api;
+    // this.gridColumnApi = params.columnApi;
+  };
+
+  onSelectionChanged(event) {
+    this.selectedRows = event.api.getSelectedRows();
+    console.log(this.selectedRows);
+  }
+
   OnChange(changeData) {
     this.currentPage = changeData;
     console.log('changeData', changeData);
@@ -67,53 +87,21 @@ export class BuildingsComponent implements OnInit {
   }
   FormSubmit() {
     this.btnLoading = true;
-    this.addVisitors = this.buildingForm.value;
-    this.addVisitors.community = localStorage.getItem('community');
-    console.log(this.addVisitors, 'formvalue');
-    if (this.isNewForm === true) {
-      this.dataservice
-        .addBuildings(this.addVisitors)
-        .subscribe((result: any) => {
-          console.log('FormSubmit', result);
-          if (result.status === 201) {
-            alert('Building created successfully!');
-            this.btnLoading = false;
-            this.closebutton.nativeElement.click();
-            this.getBuildings();
-            location.reload();
-          } else {
-            this.btnLoading = false;
-            alert('Failed. Please check the fields!');
-          }
-        });
-    } else {
-      this.dataservice
-        .editBuildings(this.addVisitors, this.editId)
-        .subscribe((result: any) => {
-          console.log('FormSubmit', result);
-          if (result.status === 200) {
-            alert('Building edited successfully!');
-            this.btnLoading = false;
-            this.closebutton.nativeElement.click();
-            this.getBuildings();
-            location.reload();
-          } else {
-            this.btnLoading = false;
-            alert('Failed. Please check the fields!');
-          }
-        });
-    }
-  }
-  deleteBuilding(item) {
-    this.deleteID = item;
-    console.log(this.deleteID);
-  }
-  deleteBuildingConfirm(check) {
-    console.log(check);
-    this.dataservice.deleteBuildings(this.deleteID.id).subscribe((result) => {
-      console.log(result);
-      this.getBuildings();
-      location.reload();
+    this.payload = this.assignForm.value;
+    this.payload.customers = Array.from(this.selectedRows, (x:any) => x.id);
+    console.log(this.payload, 'formvalue');
+    this.dataservice.assignCustomers(this.payload).subscribe((result: any) => {
+      console.log('FormSubmit', result);
+      if (result.status === 201) {
+        alert('Customers assigned successfully!');
+        this.btnLoading = false;
+        this.closebutton.nativeElement.click();
+        this.getCustomers();
+        // location.reload();
+      } else {
+        this.btnLoading = false;
+        alert('Failed. Please check the fields!');
+      }
     });
   }
 }

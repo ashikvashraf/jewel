@@ -15,7 +15,7 @@ const httpOptions: Object = {
   providedIn: 'root',
 })
 export class DataService {
-  baseURL = 'http://homesafe-dev.live.untanglestrategy.com/api/';
+  baseURL = ' https://telecaller-dev.app.vazhemadomprints.com/api/';
   params: URLSearchParams = new URLSearchParams();
   headers = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -25,12 +25,40 @@ export class DataService {
   constructor(private http: HttpClient, private apollo: Apollo) {}
 
   Login(data): Observable<any> {
-    const httpOptions1: Object  = {
+    const httpOptions1: Object = {
       // headers : this.headers,
       observe: 'response',
     };
-    return this.http.post(this.baseURL + `auth/local`, data, httpOptions1);
+    return this.http.post(this.baseURL + `v1/login/`, data, httpOptions1);
   }
+  getAreaLists() {
+    return this.http.get(this.baseURL + apiURLs.area, httpOptions);
+  }
+  getAgents() {
+    return this.http.get(this.baseURL + apiURLs.agents, httpOptions);
+  }
+  getCustomers(value) {
+    console.log(value);
+    return this.http.get(
+      this.baseURL + apiURLs.customers + `?area=${value}`,
+      httpOptions
+    );
+  }
+  getCustomersbyAgent(value) {
+    console.log(value);
+    return this.http.get(
+      this.baseURL + apiURLs.getcustomerbyagent + `${value}/`,
+      httpOptions
+    );
+  }
+  assignCustomers(payload) {
+    return this.http.post(
+      this.baseURL + apiURLs.assignCustomers,
+      payload,
+      httpOptions
+    );
+  }
+
   getResidents() {
     return this.http.get(this.baseURL + apiURLs.residents, httpOptions);
   }
@@ -60,16 +88,12 @@ export class DataService {
     );
   }
   getMaintenanceFeeTypes() {
-    return this.http.get(this.baseURL + apiURLs.maintenanceFeeTypes, httpOptions);
-  }
-  getBuildings() {
     return this.http.get(
-      this.baseURL +
-        apiURLs.buildings +
-        `${localStorage.getItem('community')}/`,
+      this.baseURL + apiURLs.maintenanceFeeTypes,
       httpOptions
     );
   }
+
   getApartments() {
     return this.http.get(
       this.baseURL +
@@ -80,9 +104,7 @@ export class DataService {
   }
   getApartmentsbyBuilding(building) {
     return this.http.get(
-      this.baseURL +
-        apiURLs.apartmentsbyBuilding +
-        `${building}/`,
+      this.baseURL + apiURLs.apartmentsbyBuilding + `${building}/`,
       httpOptions
     );
   }
@@ -168,7 +190,10 @@ export class DataService {
         delete_ids: [deleteItems],
       },
     };
-    return this.http.delete(this.baseURL + apiURLs.maintenanceFeeTypes, options);
+    return this.http.delete(
+      this.baseURL + apiURLs.maintenanceFeeTypes,
+      options
+    );
   }
   updateComplaintStatus(status, id) {
     const body = {
@@ -180,14 +205,8 @@ export class DataService {
       httpOptions
     );
   }
-  addBuildings(visitor) {
-    return this.http.post(
-      this.baseURL + apiURLs.addBuildings,
-      visitor,
-      httpOptions
-    );
-  }
-  editBuildings(visitor,id) {
+  
+  editBuildings(visitor, id) {
     return this.http.put(
       this.baseURL + apiURLs.editBuildings + `${id}/`,
       visitor,
@@ -201,7 +220,7 @@ export class DataService {
       httpOptions
     );
   }
-  editApartments(visitor,id) {
+  editApartments(visitor, id) {
     return this.http.put(
       this.baseURL + apiURLs.editApartments + `${id}/`,
       visitor,
@@ -215,7 +234,7 @@ export class DataService {
       httpOptions
     );
   }
-  editResidents(resident,id) {
+  editResidents(resident, id) {
     return this.http.put(
       this.baseURL + apiURLs.editResidents + `${id}/`,
       resident,
@@ -249,7 +268,7 @@ export class DataService {
       httpOptions
     );
   }
-  editFees(fees,id) {
+  editFees(fees, id) {
     return this.http.put(
       this.baseURL + apiURLs.editMaintenanceFeeTypes + `${id}/`,
       fees,
