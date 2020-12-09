@@ -11,7 +11,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CustomersComponent } from './buildings/buildings.component';
 import { ApartmentsComponent } from './apartments/apartments.component';
 import { HeaderComponent } from './header/header.component';
-import { GraphQLModule } from './graphql.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { FooterComponent } from './footer/footer.component';
@@ -35,7 +34,6 @@ import { AgGridModule } from 'ag-grid-angular';
     HttpClientModule,
     AppRoutingModule,
     NgbModule,
-    GraphQLModule,
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
     AgGridModule.withComponents([])
