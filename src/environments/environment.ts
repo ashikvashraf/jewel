@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  // apiUrl: 'http://office-admin-core.live.untanglestrategy.com/'
-  apiUrl: 'https://telecaller-dev.app.vazhemadomprints.com/api/'
+  apiUrl: 'https://telecaller.app.vazhemadomprints.com/api/'
 };
 
 /*

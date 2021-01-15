@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { apiURLs } from './constants';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
-  baseURL = ' https://telecaller-dev.app.vazhemadomprints.com/api/';
+  baseURL = environment.apiUrl;
   params: URLSearchParams = new URLSearchParams();
 
   constructor(private http: HttpClient) {}
